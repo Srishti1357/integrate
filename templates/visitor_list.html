@@ -1,0 +1,80 @@
+{% extends "base.html" %} {% block content %}
+<h2>Visitor List</h2>
+
+<!-- Filter Form -->
+<form method="GET" class="mb-3">
+  <div class="row">
+    <div class="col-md-3">
+      <label for="start_date">Start Date:</label>
+      <input
+        type="date"
+        name="start_date"
+        class="form-control"
+        value="{{ request.GET.start_date }}"
+      />
+    </div>
+    <div class="col-md-3">
+      <label for="end_date">End Date:</label>
+      <input
+        type="date"
+        name="end_date"
+        class="form-control"
+        value="{{ request.GET.end_date }}"
+      />
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-primary mt-4">Filter</button>
+    </div>
+  </div>
+</form>
+
+<!-- Visitor Table -->
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Event</th>
+      <th>Visitor Type</th>
+      <th>College Name</th>
+      <th>Date & Time</th>
+      <th>Approval</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for visitor in visitors %}
+    <tr>
+      <td>{{ visitor.id }}</td>
+      <td>{{ visitor.name }}</td>
+      <td>{{ visitor.event }}</td>
+      <td>{{ visitor.visitor_type }}</td>
+      <td>{{ visitor.college_name }}</td>
+      <td>{{ visitor.datetime }}</td>
+      <td>
+        {% if visitor.approval == 2 %}
+        <button
+          class="btn btn-success btn-sm"
+          onclick="updateApproval({{ visitor.id }}, 1)"
+        >
+          Accept
+        </button>
+        <button
+          class="btn btn-danger btn-sm"
+          onclick="updateApproval({{ visitor.id }}, 0)"
+        >
+          Reject
+        </button>
+        {% else %}
+        <span
+          class="badge {% if visitor.approval == 1 %}bg-success{% else %}bg-danger{% endif %}"
+        >
+          {{ visitor.approval_status }}
+        </span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
