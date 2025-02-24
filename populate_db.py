@@ -1,6 +1,7 @@
 import os
 import django
 from datetime import datetime
+from random import choice
 
 # ✅ Set up Django environment
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Integrate.settings")  # Change 'Integrate' to your actual project name
@@ -9,6 +10,7 @@ django.setup()
 # ✅ Import models
 from collegeApp.models import Visitor
 from adminApp.models import College
+from gate.models import Attendance
 
 # ✅ Sample visitor data
 visitors_data = [
@@ -24,18 +26,26 @@ visitors_data = [
     {"name": "Emily Foster", "event": "Film Festival", "visitor_type": "Filmmaker", "college_name": "Cinema School", "datetime": datetime(2025, 2, 16, 11, 55), "approval": 0},
 ]
 
+def generate_roll_number(index):
+    """Generate a unique roll number for each visitor."""
+    return f"VIS{1000 + index}"
+
 def populate_db():
     try:
         new_entries = []
         existing_entries = []
 
         # ✅ Process each visitor entry
-        for visitor_data in visitors_data:
+        for index, visitor_data in enumerate(visitors_data):
+            # 🔹 Generate a unique roll number
+            roll_no = generate_roll_number(index)
+
             # 🔹 Get or create the college
             college, _ = College.objects.get_or_create(college_name=visitor_data['college_name'])
 
             # 🔹 Create or update the visitor
             visitor, created = Visitor.objects.update_or_create(
+                roll_no=roll_no,  # ✅ Unique Roll Number
                 name=visitor_data['name'],
                 event=visitor_data['event'],
                 visitor_type=visitor_data['visitor_type'],
@@ -43,12 +53,20 @@ def populate_db():
                 defaults={"datetime": visitor_data['datetime'], "approval": visitor_data['approval']}
             )
 
+            # 🔹 Create the attendance record **after** the visitor is created
+            attendance_status = choice(["Present", "Absent"])
+            attendance = Attendance.objects.create(user=visitor, status=attendance_status)
+
+            # 🔹 Update visitor with attendance
+            visitor.attendence = attendance
+            visitor.save()
+
             if created:
                 new_entries.append(visitor)
-                print(f"✅ New Visitor '{visitor.name}' added.")
+                print(f"✅ New Visitor '{visitor.name}' ({visitor.roll_no}) added with {attendance_status} attendance.")
             else:
                 existing_entries.append(visitor)
-                print(f"🔄 Existing Visitor '{visitor.name}' updated.")
+                print(f"🔄 Existing Visitor '{visitor.name}' ({visitor.roll_no}) updated.")
 
         # ✅ Sorting: New entries first, then old ones
         all_visitors = sorted(new_entries + existing_entries, key=lambda v: v.datetime, reverse=True)
@@ -56,7 +74,7 @@ def populate_db():
         # ✅ Display sorted results
         print("\n🔹 Final Sorted List (Newest at Top):")
         for visitor in all_visitors:
-            print(f"📌 {visitor.name} - {visitor.event} - {visitor.datetime}")
+            print(f"📌 {visitor.name} ({visitor.roll_no}) - {visitor.event} - {visitor.datetime} - {visitor.attendence.status}")
 
     except Exception as e:
         print(f"❌ Error while adding visitor: {e}")

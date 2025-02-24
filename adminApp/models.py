@@ -36,7 +36,7 @@ class CollegeAdmin(admin.ModelAdmin):
 
 @admin.register(Visitor)
 class VisitorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'college_name')
+    list_display = ('roll_no', 'name', 'college_name','attendence')
     search_fields = ('name', 'college_name')
     actions = ['print_students']  # Add the custom action here
 

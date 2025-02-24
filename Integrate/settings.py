@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'collegeApp',
     'templates',
     'django_filters',
-    'adminApp'
+    'adminApp',
+    'gate',
+    'rest_framework',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

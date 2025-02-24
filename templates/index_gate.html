@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Gatekeeper Panel</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="text-center text-primary">Gatekeeper Panel</h1>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Name</th>
+                        <th>Roll Number</th>
+                        <th>QR Scanner</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.roll_no }}</td>
+                        <td>
+                            <a href="{% url 'qr' %}" class="btn btn-outline-primary btn-sm">Open QR Scanner</a>
+                        </td>
+                        <td>
+                            <button id="present-{{ user.roll_no }}" class="btn btn-outline-success btn-sm"
+                                onclick="markAttendance('{{ user.roll_no }}', 'Present')">Present</button>
+                            <button id="absent-{{ user.roll_no }}" class="btn btn-outline-danger btn-sm"
+                                onclick="markAttendance('{{ user.roll_no }}', 'Absent')">Absent</button>
+                            <span id="status-{{ user.roll_no }}" class="ms-2"></span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        // Fetch attendance status on page load
+        $(document).ready(function () {
+            {% for user in users %}
+                fetchAttendanceStatus('{{ user.roll_no }}');
+            {% endfor %}
+
+        });
+
+        // Fetch attendance status for a user
+        function fetchAttendanceStatus(rollNumber) {
+            $.ajax({
+                url: `/gate/get-attendance/${rollNumber}/`,
+                method: 'GET',
+                success: function (response) {
+                    updateUI(rollNumber, response.status);
+                    
+                },
+                error: function (error) {
+                    console.error('Error fetching attendance status:', error);
+                }
+            });
+        }
+
+        // Mark attendance
+        function markAttendance(rollNumber, status) {
+            $.ajax({
+                url: '/gate/mark-attendance/',
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+                data: JSON.stringify({
+                    roll_no: rollNumber,
+                    status: status
+                }),
+                success: function (response) {
+                    updateUI(rollNumber, status);
+                },
+                error: function (error) {
+                    alert('Error marking attendance');
+                }
+            });
+        }
+
+        // Update UI based on attendance status
+        function updateUI(rollNumber, status) {
+            let presentBtn = $("#present-" + rollNumber);
+            let absentBtn = $("#absent-" + rollNumber);
+            let statusSpan = $("#status-" + rollNumber);
+
+            if (status === 'Present') {
+                presentBtn.removeClass("btn-outline-success").addClass("btn-success").prop("disabled", true);
+                absentBtn.removeClass("btn-danger").addClass("btn-outline-danger").prop("disabled", false);
+                statusSpan.text("Present").removeClass("text-danger").addClass("text-success");
+            } else if (status === 'Absent') {
+                absentBtn.removeClass("btn-outline-danger").addClass("btn-danger").prop("disabled", true);
+                presentBtn.removeClass("btn-success").addClass("btn-outline-success").prop("disabled", false);
+                statusSpan.text("Absent").removeClass("text-success").addClass("text-danger");
+            }
+        }
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

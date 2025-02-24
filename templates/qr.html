@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode"></script> <!-- QR Code Library -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #reader {
+            width: 400px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+
+        #qr-result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="start-camera">Start QR Scanner</button>
+    <div id="reader" style="display:none;"></div>
+    <p id="qr-result"></p>
+
+    <script>
+        const startButton = document.getElementById('start-camera');
+        const qrResult = document.getElementById('qr-result');
+
+        async function startQRScanner() {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+            if (videoDevices.length === 0) {
+                alert('No camera found!');
+                return;
+            }
+
+            let backCamera = videoDevices.find(device => device.label.toLowerCase().includes('back'));
+            let frontCamera = videoDevices.find(device => device.label.toLowerCase().includes('front')) || videoDevices[0];
+
+            let selectedCamera = backCamera ? backCamera.deviceId : frontCamera.deviceId;
+
+            document.getElementById('reader').style.display = 'block';
+            startButton.style.display = 'none';
+
+            const html5QrCode = new Html5Qrcode("reader");
+
+            html5QrCode.start(
+                selectedCamera,
+                {
+                    fps: 10,    // Frames per second
+                    qrbox: 250  // Scanning area size
+                },
+                (decodedText) => {
+                    html5QrCode.stop(); // Stop scanning after detecting QR code
+                    qrResult.innerHTML = `QR Code Detected: <br> <strong>${decodedText}</strong>`;
+
+                    // Check if scanned text is a URL
+                    if (decodedText.match(/^(https?:\/\/[^\s]+)/)) {
+                        setTimeout(() => {
+                            window.open(decodedText, "_blank"); // Open in a new tab
+                        }, 1000);
+                    }
+                },
+                (errorMessage) => {
+                    console.log(errorMessage); // Ignore scan errors
+                }
+            ).catch(err => alert("Error: " + err));
+        }
+
+        startButton.addEventListener('click', startQRScanner);
+    </script>
+</body>
+
+</html>
