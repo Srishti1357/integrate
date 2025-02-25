@@ -53,7 +53,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('roll_no', 'name', 'college','attendence')
+    list_display = ('roll_no', 'name', 'college','attendence', 'datetime')
     search_fields = ('name', 'college')
     actions = ['print_students']  # Add the custom action here
 

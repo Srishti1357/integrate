@@ -49,6 +49,7 @@
                 <th>Roll Number</th>
                 <th>Name</th>
                 <th>College</th>
+                <th>Date and Time</th>
                 <th>Attendence</th>
             </tr>
         </thead>
@@ -58,7 +59,9 @@
                     <td>{{ student.roll_no }}</td>
                     <td>{{ student.name }}</td>
                     <td>{{ student.college }}</td>
+                    <td>{{ student.datetime }}</td>
                     <td>{{ student.attendence }}</td>
+                    
                 </tr>
             {% endfor %}
         </tbody>
