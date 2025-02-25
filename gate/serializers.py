@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from .models import  Attendance
-from collegeApp.models import Visitor
+from collegeApp.models import Student
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Visitor
+        model = Student
         fields = ['id', 'name', 'roll_number']
 
 class AttendanceSerializer(serializers.ModelSerializer):

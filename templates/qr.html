@@ -58,6 +58,11 @@
         const qrResult = document.getElementById('qr-result');
 
         async function startQRScanner() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                alert("Camera access is not supported in this browser or insecure connection. Use HTTPS or localhost.");
+                return;
+            }
+
             const devices = await navigator.mediaDevices.enumerateDevices();
             const videoDevices = devices.filter(device => device.kind === 'videoinput');
 

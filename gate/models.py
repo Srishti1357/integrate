@@ -9,7 +9,7 @@ from django.db import models
 #         return self.name
 
 class Attendance(models.Model):
-    user = models.ForeignKey("collegeApp.Visitor", on_delete=models.CASCADE)
+    user = models.ForeignKey("collegeApp.Student", on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=[('Present', 'Present'), ('Absent', 'Absent')])
     timestamp = models.DateTimeField(auto_now_add=True)
     

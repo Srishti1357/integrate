@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Attendance
-from collegeApp.models import Visitor
+from collegeApp.models import Student
 from .serializers import UserSerializer, AttendanceSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -12,8 +12,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 def index(request):
-    visitors = Visitor.objects.all()
-    return render(request, 'index_gate.html', {'users': visitors})
+    Students = Student.objects.all()
+    return render(request, 'index_gate.html', {'users': Students})
 
 # @api_view(['POST'])
 # def mark_attendance(request):
@@ -38,7 +38,7 @@ def mark_attendance(request):
     if not roll_no or not status_value:
         return Response({'error': 'Missing roll_no or status'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = get_object_or_404(Visitor, roll_no=roll_no)
+    user = get_object_or_404(Student, roll_no=roll_no)
 
     # Update or create attendance record
     attendance, created = Attendance.objects.update_or_create(
@@ -57,7 +57,7 @@ def qr(request):
 
 @api_view(['GET'])
 def get_attendance(request, roll_no):
-    user = get_object_or_404(Visitor, roll_no=roll_no)
+    user = get_object_or_404(Student, roll_no=roll_no)
     attendance = Attendance.objects.filter(user=user).first()
 
     if attendance:

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-center">Student List - {{ request.user.college.name }}</h2>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Event</th>
+            <th>Type of Visitor</th>
+            <th>Date & Time</th>
+            <th>Approval</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.id }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.event }}</td>
+            <td>{{ student.type_of_visitor }}</td>
+            <td>{{ student.datetime }}</td>
+            <td>
+                {% if student.approval == 1 %}
+                    <span class="badge bg-success">Approved</span>
+                {% elif student.approval == 0 %}
+                    <span class="badge bg-danger">Rejected</span>
+                {% else %}
+                    <a href="{% url 'update_approval' student.id 1 %}" class="btn btn-success btn-sm">Accept</a>
+                    <a href="{% url 'update_approval' student.id 0 %}" class="btn btn-danger btn-sm">Reject</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

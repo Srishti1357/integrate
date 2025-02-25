@@ -1,10 +1,10 @@
-from collegeApp.models import Visitor
-
+from collegeApp.models import Student, CustomUser
 from django.db import models
 from django.contrib import admin
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.contrib.admin import SimpleListFilter
+from django.contrib.auth.admin import UserAdmin
 
 class College(models.Model):
     college_name = models.CharField(max_length=255, unique=True)  # Ensure unique names
@@ -32,12 +32,29 @@ class CollegeAdmin(admin.ModelAdmin):
     list_filter = ('active',)
 
 
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):  
+    list_display = ('username', 'email', 'college', 'is_staff', 'is_active')
+    list_filter = ('college', 'is_staff', 'is_active')
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': ('email', 'college')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'password1', 'password2', 'college', 'is_staff', 'is_active'),
+        }),
+    )
+    search_fields = ('username', 'email', 'college')
+    ordering = ('username',)
 
 
-@admin.register(Visitor)
-class VisitorAdmin(admin.ModelAdmin):
-    list_display = ('roll_no', 'name', 'college_name','attendence')
-    search_fields = ('name', 'college_name')
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ('roll_no', 'name', 'college','attendence')
+    search_fields = ('name', 'college')
     actions = ['print_students']  # Add the custom action here
 
     def print_students(self, request, queryset):
