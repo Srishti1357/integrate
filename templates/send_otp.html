@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send OTP</title>
+    <script>
+        function startTimer(duration, display, button) {
+            let timer = duration, seconds;
+            let interval = setInterval(function () {
+                seconds = timer;
+                display.textContent = `Resend OTP in ${seconds}s`;
+
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    button.disabled = false;
+                    display.textContent = "";
+                }
+            }, 1000);
+        }
+
+        function disableButton() {
+            let button = document.getElementById("otpBtn");
+            let timerDisplay = document.getElementById("timer");
+            button.disabled = true;
+            startTimer(30, timerDisplay, button);
+        }
+    </script>
+</head>
+<body style="background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Poppins', sans-serif;">
+
+    <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(12px); padding: 25px; border-radius: 12px; text-align: center; width: 350px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+        <h2 style="color: white; margin-bottom: 20px; font-size: 24px;">Enter Phone Number </h2>
+
+        <!-- Success & Error Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 8px; margin-bottom: 12px; color: {% if message.tags == 'success' %}#4CAF50{% else %}#FF5252{% endif %}; font-weight: bold;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Send OTP Form -->
+        <form method="POST" action="" onsubmit="disableButton()">
+            {% csrf_token %}
+            <input type="text" name="phone" placeholder="Enter Phone Number" required style="width: 100%; padding: 12px; margin: 12px 0; border: none; border-radius: 8px; outline: none; text-align: center; font-size: 16px; background: rgba(255, 255, 255, 0.2); color: white;">
+            <button id="otpBtn" type="submit" style="width: 100%; padding: 14px; background: #ff4b5c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; transition: 0.3s ease;">Send OTP</button>
+        </form>
+
+        <!-- Timer Display -->
+        <p id="timer" style="color: yellow; margin-top: 10px;"></p>
+    </div>
+
+</body>
+</html>

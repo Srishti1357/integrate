@@ -27,6 +27,7 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):  # Extending Django's User model
     college = models.ForeignKey("adminApp.College", on_delete=models.CASCADE, null=True, blank=True)
+    phone = models.CharField(max_length=10, unique=True, null=True, blank=True)  # 👈 
 
     class Meta:
         swappable = "AUTH_USER_MODEL"  # Ensures Django recognizes the custom user model
@@ -44,6 +45,7 @@ class Student(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)
     approval = models.IntegerField(default=2)  # 0 = Rejected, 1 = Accepted, 2 = Pending
     attendence = models.ForeignKey("gate.Attendance", on_delete=models.CASCADE, null=True, blank=True)
+    phone = models.CharField(max_length=10, default='0000000000') 
 
     def __str__(self):
         return self.name
