@@ -11,9 +11,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
+from datetime import datetime
+
 def index(request):
-    Students = Student.objects.all()
-    return render(request, 'index_gate.html', {'users': Students})
+    today = datetime.now().date()
+    students_today = Student.objects.filter(datetime__date=today)  # Filter students by today's date
+    
+    return render(request, 'index_gate.html', {'users': students_today})
 
 # @api_view(['POST'])
 # def mark_attendance(request):

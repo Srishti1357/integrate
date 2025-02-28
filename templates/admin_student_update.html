@@ -1,0 +1,49 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Update Student</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ student.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="roll_no" class="form-label">Roll No</label>
+            <input type="text" class="form-control" id="roll_no" name="roll_no" value="{{ student.roll_no }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="event" class="form-label">Event</label>
+            <input type="text" class="form-control" id="event" name="event" value="{{ student.event }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="type_of_visitor" class="form-label">Type of Visitor</label>
+            <input type="text" class="form-control" id="type_of_visitor" name="type_of_visitor" value="{{ student.type_of_visitor }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="college" class="form-label">College</label>
+            <select class="form-control" id="college" name="college">
+                {% for college in colleges %}
+                <option value="{{ college.id }}" {% if student.college.id == college.id %}selected{% endif %}>
+                    {{ college.college_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="attendance_status" class="form-label">Attendance Status</label>
+            <select class="form-control" id="attendance_status" name="attendance_status">
+                <option value="">Select Attendance Status</option>
+                {% for status, display in attendance_choices %}
+                <option value="{{ status }}" {% if student.attendence and student.attendence.status == status %}selected{% endif %}>
+                    {{ display }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Update Student</button>
+        <a href="{% url 'student_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

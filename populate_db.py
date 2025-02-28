@@ -1,88 +1,3 @@
-# import os
-# import django
-# from datetime import datetime
-# from random import choice
-
-# # ✅ Set up Django environment
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Integrate.settings")  # Change 'Integrate' to your actual project name
-# django.setup()
-
-# # ✅ Import models
-# from collegeApp.models import Visitor
-# from adminApp.models import College
-# from gate.models import Attendance
-
-# # ✅ Sample visitor data
-# visitors_data = [
-#     {"name": "Sophia Reed", "event": "AI Hackathon", "visitor_type": "Student", "college_name": "Tech Institute", "datetime": datetime(2025, 2, 17, 11, 45), "approval": 2},
-#     {"name": "Michael Carter", "event": "Blockchain Summit", "visitor_type": "Entrepreneur", "college_name": "Business School", "datetime": datetime(2025, 2, 18, 16, 20), "approval": 1},
-#     {"name": "Ava Patel", "event": "Art Expo", "visitor_type": "Artist", "college_name": "Fine Arts Academy", "datetime": datetime(2025, 2, 15, 9, 30), "approval": 0},
-#     {"name": "Ethan Parker", "event": "Robotics Championship", "visitor_type": "Engineer", "college_name": "Tech University", "datetime": datetime(2025, 2, 20, 14, 10), "approval": 1},
-#     {"name": "Liam Nguyen", "event": "Entrepreneur Meetup", "visitor_type": "Investor", "college_name": "Global Business Hub", "datetime": datetime(2025, 2, 19, 18, 50), "approval": 2},
-#     {"name": "Zara Malik", "event": "Startup Pitch Fest", "visitor_type": "Founder", "college_name": "XYZ Incubator", "datetime": datetime(2025, 2, 22, 10, 15), "approval": 1},
-#     {"name": "Oscar Bennett", "event": "Tech Workshop", "visitor_type": "Developer", "college_name": "Software Academy", "datetime": datetime(2025, 2, 13, 13, 40), "approval": 0},
-#     {"name": "Isabella Ross", "event": "Medical Innovation Forum", "visitor_type": "Doctor", "college_name": "Health Research Institute", "datetime": datetime(2025, 2, 25, 12, 30), "approval": 2},
-#     {"name": "Noah Adams", "event": "Cybersecurity Conference", "visitor_type": "Ethical Hacker", "college_name": "Security Academy", "datetime": datetime(2025, 2, 21, 9, 0), "approval": 1},
-#     {"name": "Emily Foster", "event": "Film Festival", "visitor_type": "Filmmaker", "college_name": "Cinema School", "datetime": datetime(2025, 2, 16, 11, 55), "approval": 0},
-# ]
-
-# def generate_roll_number(index):
-#     """Generate a unique roll number for each visitor."""
-#     return f"VIS{1000 + index}"
-
-# def populate_db():
-#     try:
-#         new_entries = []
-#         existing_entries = []
-
-#         # ✅ Process each visitor entry
-#         for index, visitor_data in enumerate(visitors_data):
-#             # 🔹 Generate a unique roll number
-#             roll_no = generate_roll_number(index)
-
-#             # 🔹 Get or create the college
-#             college, _ = College.objects.get_or_create(college_name=visitor_data['college_name'])
-
-#             # 🔹 Create or update the visitor
-#             visitor, created = Visitor.objects.update_or_create(
-#                 roll_no=roll_no,  # ✅ Unique Roll Number
-#                 name=visitor_data['name'],
-#                 event=visitor_data['event'],
-#                 visitor_type=visitor_data['visitor_type'],
-#                 college_name=college,  # ✅ Correct ForeignKey reference
-#                 defaults={"datetime": visitor_data['datetime'], "approval": visitor_data['approval']}
-#             )
-
-#             # 🔹 Create the attendance record **after** the visitor is created
-#             attendance_status = choice(["Present", "Absent"])
-#             attendance = Attendance.objects.create(user=visitor, status=attendance_status)
-
-#             # 🔹 Update visitor with attendance
-#             visitor.attendence = attendance
-#             visitor.save()
-
-#             if created:
-#                 new_entries.append(visitor)
-#                 print(f"✅ New Visitor '{visitor.name}' ({visitor.roll_no}) added with {attendance_status} attendance.")
-#             else:
-#                 existing_entries.append(visitor)
-#                 print(f"🔄 Existing Visitor '{visitor.name}' ({visitor.roll_no}) updated.")
-
-#         # ✅ Sorting: New entries first, then old ones
-#         all_visitors = sorted(new_entries + existing_entries, key=lambda v: v.datetime, reverse=True)
-
-#         # ✅ Display sorted results
-#         print("\n🔹 Final Sorted List (Newest at Top):")
-#         for visitor in all_visitors:
-#             print(f"📌 {visitor.name} ({visitor.roll_no}) - {visitor.event} - {visitor.datetime} - {visitor.attendence.status}")
-
-#     except Exception as e:
-#         print(f"❌ Error while adding visitor: {e}")
-
-# # ✅ Run the function
-# if __name__ == "__main__":
-#     populate_db()
-
 
 import os
 import django
@@ -123,7 +38,6 @@ def populate_db():
 
         # ✅ Process each student entry
         for index, student_data in enumerate(students_data):
-            # 🔹 Generate a unique roll number
             roll_no = generate_roll_number(index)
 
             # 🔹 Get or create the college
@@ -142,9 +56,9 @@ def populate_db():
                 }
             )
 
-            # 🔹 Create the attendance record **after** the student is created
-            attendance_status = choice(["Present", "Absent"])
-            attendance = Attendance.objects.create(user=student, status=attendance_status)
+            # 🔹 Get or create an attendance record (Prevent duplication)
+            attendance_status = choice(["Present", "Absent", "Pending"])
+            attendance, _ = Attendance.objects.get_or_create(user=student, defaults={"status": attendance_status})
 
             # 🔹 Update student with attendance
             student.attendence = attendance
@@ -152,7 +66,7 @@ def populate_db():
 
             if created:
                 new_entries.append(student)
-                print(f"✅ New Student '{student.name}' ({student.roll_no}) added with {attendance_status} attendance.")
+                print(f"✅ New Student '{student.name}' ({student.roll_no}) added with {attendance.status} attendance.")
             else:
                 existing_entries.append(student)
                 print(f"🔄 Existing Student '{student.name}' ({student.roll_no}) updated.")

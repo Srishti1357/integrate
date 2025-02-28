@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-i&hnv(0a+80p!(y$0_9riuasj8&voa%j&q_d$&=#jd*m)z&8nf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.116.133"]
+# ALLOWED_HOSTS = ["192.168.116.133"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -132,3 +133,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'collegeApp.CustomUser'
+

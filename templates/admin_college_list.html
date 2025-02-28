@@ -1,0 +1,71 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Colleges List</h2>
+    <a href="{% url 'college_create' %}" class="btn btn-primary mb-3">Add College</a>
+    
+    <!-- Search Input -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search Colleges...">
+        </div>
+    </div>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>College Name</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="collegeTableBody">
+            {% for college in colleges %}
+            <tr>
+                <td>{{ college.id }}</td>
+                <td>{{ college.college_name }}</td>
+                <td>
+                    <input type="checkbox" 
+                           onchange="toggleCollege({{ college.id }})"
+                           {% if college.active %}checked{% endif %}>
+                </td>
+                <td>
+                    <a href="{% url 'college_delete' college.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function toggleCollege(collegeId) {
+    fetch("{% url 'toggle_college' 0 %}".replace('0', collegeId), {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        }
+    }).then(response => {
+        if (response.ok) {
+            window.location.reload(); // Reload to reflect changes
+        }
+    });
+}
+
+// Search functionality for college table
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#collegeTableBody tr');
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.indexOf(filter) > -1) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Add College</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="college_name" class="form-label">College Name</label>
+            <input type="text" class="form-control" id="college_name" name="college_name" required>
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{% url 'college_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

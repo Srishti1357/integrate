@@ -1,0 +1,39 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Admin Dashboard</h2>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Colleges</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ college_count }}</h5>
+                    <a href="{% url 'college_list' %}" class="btn btn-light">Manage Colleges</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">College Users</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ user_count }}</h5>
+                    <a href="{% url 'user_list' %}" class="btn btn-light">Manage CollegeUsers</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Students</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ student_count }}</h5>
+                    <a href="{% url 'student_list' %}" class="btn btn-light">Manage Students</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
