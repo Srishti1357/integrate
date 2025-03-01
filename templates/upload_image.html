@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload College ID Card</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload College ID Card</h2>
+
+        <form id="uploadForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="button" id="verifyBtn">Verify</button>
+            <button type="submit" id="submitBtn" disabled>Submit</button>
+        </form>
+
+        <!-- Show extracted OCR data if available -->
+        <div id="ocrResults" style="display: none;">
+            <h3>Extracted Data:</h3>
+            <p><strong>College:</strong> <span id="extractedCollege"></span></p>
+            <p><strong>UID:</strong> <span id="extractedUID"></span></p>
+        </div>
+
+        <p class="error" id="errorMessage"></p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#verifyBtn").click(function(e) {
+                e.preventDefault();
+                
+                let formData = new FormData($("#uploadForm")[0]);
+
+                $.ajax({
+                    url: "{% url 'verify_ocr' %}",  
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            $("#extractedCollege").text(response.data.college);
+                            $("#extractedUID").text(response.data.UID);
+                            $("#ocrResults").show();
+                            $("#submitBtn").prop("disabled", false);
+                            $("#errorMessage").text("");
+                        } else {
+                            $("#errorMessage").text(response.error);
+                            $("#submitBtn").prop("disabled", true);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $("#errorMessage").text("OCR processing failed. Please try again.");
+                        $("#submitBtn").prop("disabled", true);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

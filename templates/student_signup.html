@@ -1,1 +1,190 @@
-signup 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Student</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #6e45e2, #88d3ce);
+        color: #fff;
+      }
+      .form-container {
+        max-width: 400px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+        margin: auto;
+      }
+      .form-control {
+        border-radius: 10px;
+        margin-bottom: 15px;
+        color: #000;
+      }
+      .btn-success {
+        border-radius: 10px;
+        background: linear-gradient(45deg, #28a745, #218838);
+        border: none;
+        transition: transform 0.2s ease;
+      }
+      .btn-success:hover {
+        transform: translateY(-5px);
+      }
+      .btn-disabled {
+        background: gray !important;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="form-container">
+      <h2 class="text-center mb-4">Register Student</h2>
+
+      <form
+        id="student-form"
+        action="{% url 'verify_ocr'%}"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+        <input type="hidden" id="csrf_token" value="{{ csrf_token }}" />
+
+        <input
+          type="text"
+          name="name"
+          class="form-control"
+          placeholder="Name"
+          required
+        />
+        <select name="event" class="form-control" required>
+          <option value="industry">Industry Visit</option>
+          <option value="academic">Academic Visit</option>
+        </select>
+        <select name="visitor_type" class="form-control" required>
+          <option value="student">Student</option>
+          <option value="faculty">Faculty</option>
+        </select>
+        <input
+          type="text"
+          name="phone_number"
+          class="form-control"
+          placeholder="Phone Number"
+          required
+        />
+        <input
+          type="text"
+          name="college_name"
+          class="form-control"
+          placeholder="College Name"
+          required
+        />
+        <input
+          type="text"
+          name="UID"
+          class="form-control"
+          placeholder="Unique ID"
+          required
+        />
+        <input
+          type="file"
+          name="college_id_card"
+          id="college_id_card"
+          class="form-control"
+          required
+        />
+        <input
+          type="date"
+          name="visit_date"
+          id="visit_date"
+          class="form-control"
+          required
+        />
+
+        <!-- Verify Button -->
+        <button
+          type="submit"
+          id="verify-btn"
+          class="btn btn-success w-100 mt-3"
+        >
+          Verify
+        </button>
+
+        <div id="verify-message" class="mt-2"></div>
+
+        <!-- Submit Button (Disabled initially) -->
+        <button
+          type="submit"
+          id="submit-btn"
+          class="btn btn-success w-100 mt-3 btn-disabled"
+          disabled
+        >
+          Submit
+        </button>
+      </form>
+
+      {% if messages %}
+      <div class="mt-3">
+        {% for message in messages %}
+        <div class="alert alert-info text-dark">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Fix JavaScript 
+    <script>
+      document
+        .getElementById("verify-btn")
+        .addEventListener("click", function () {
+          let formData = new FormData(document.getElementById("student-form"));
+          let csrfToken = document.querySelector(
+            "[name=csrfmiddlewaretoken]"
+          ).value;
+
+          fetch("{% url 'verify_ocr' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+              "X-CSRFToken": csrfToken,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+              if (data.success) {
+                document.getElementById("submit-btn").disabled = false;
+                document
+                  .getElementById("submit-btn")
+                  .classList.remove("btn-disabled");
+                document.getElementById(
+                  "verify-message"
+                ).innerHTML = `<p class="text-success"><strong>Verification Successful!</strong></p>`;
+
+                // Store verified student ID
+                let studentId = data.student_id; // Make sure backend sends student_id in response
+
+                // Modify form action to direct to QR generation
+                //document.getElementById("student-form").action = `/qr_display/${studentId}/`;
+              } else {
+                document.getElementById(
+                  "verify-message"
+                ).innerHTML = `<p class="text-danger"><strong>Error: ${data.error}</strong></p>`;
+              }
+            })
+            .catch((error) => {
+              console.error("Verification Error:", error);
+              document.getElementById(
+                "verify-message"
+              ).innerHTML = `<p class="text-danger"><strong>Error occurred during verification.</strong></p>`;
+            });
+        });
+    </script>
+-->
+  </body>
+</html>

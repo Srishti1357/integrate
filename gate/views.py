@@ -19,17 +19,6 @@ def index(request):
     
     return render(request, 'index_gate.html', {'users': students_today})
 
-# @api_view(['POST'])
-# def mark_attendance(request):
-#     roll_no = request.data.get('roll_no')
-#     status = request.data.get('status')
-    
-#     user = get_object_or_404(User, roll_no=roll_no)
-#     attendance = Attendance.objects.create(user=user, status=status)
-    
-#     serializer = AttendanceSerializer(attendance)
-#     return Response(serializer.data)
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def mark_attendance(request):

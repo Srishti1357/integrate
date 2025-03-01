@@ -1,0 +1,28 @@
+<!-- upload_success.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Success</title>
+</head>
+<body>
+    <h2>Extracted Details</h2>
+    
+    <p><strong>Extracted Name:</strong> {{ extracted_data.name }}</p>
+    <p><strong>Extracted College:</strong> {{ extracted_data.college }}</p>
+    <p><strong>Extracted UID:</strong> {{ extracted_data.UID }}</p>
+    
+    <!-- Show error message if any mismatch occurs -->
+    {% if error_message %}
+        <p style="color: red;"><strong>Error:</strong> {{ error_message }}</p>
+    {% endif %}
+    
+    <!-- QR Code Display -->
+    <h3>Generated QR Code</h3>
+    <img src="{{ qr_code_url }}" alt="QR Code">
+    
+    <br><br>
+    <a href="/">Back to Home</a>
+</body>
+</html>

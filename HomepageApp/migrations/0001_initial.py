@@ -12,11 +12,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='College',
+            name='StudentDetails',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('college_name', models.CharField(max_length=255, unique=True)),
-                ('active', models.BooleanField(default=False)),
+                ('detail_timestamp', models.DateTimeField(auto_now_add=True)),
+                ('additional_info', models.TextField(blank=True, null=True)),
             ],
         ),
     ]
