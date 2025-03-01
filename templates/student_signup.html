@@ -66,27 +66,26 @@
           <option value="industry">Industry Visit</option>
           <option value="academic">Academic Visit</option>
         </select>
-        <select name="visitor_type" class="form-control" required>
+        <select name="type_of_visitor" class="form-control" required>
           <option value="student">Student</option>
           <option value="faculty">Faculty</option>
         </select>
         <input
           type="text"
-          name="phone_number"
+          name="phone"
           class="form-control"
           placeholder="Phone Number"
           required
         />
+        <select name="college" class="form-control" required>
+          <option value="">Select College</option>
+          {% for college in active_colleges %}
+          <option value="{{ college.college_name }}">{{ college.college_name }}</option>
+          {% endfor %}
+        </select>
         <input
           type="text"
-          name="college_name"
-          class="form-control"
-          placeholder="College Name"
-          required
-        />
-        <input
-          type="text"
-          name="UID"
+          name="id"
           class="form-control"
           placeholder="Unique ID"
           required
@@ -98,13 +97,8 @@
           class="form-control"
           required
         />
-        <input
-          type="date"
-          name="visit_date"
-          id="visit_date"
-          class="form-control"
-          required
-        />
+        <input type="datetime-local" name="datetime" required>
+
 
         <!-- Verify Button -->
         <button

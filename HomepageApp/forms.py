@@ -4,7 +4,7 @@ from collegeApp.models import Student
 class RegistrationForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['name', 'event', 'type_of_visitor', 'phone', 'college', 'id', 'college_id_card']
+        fields = ['name', 'event', 'type_of_visitor', 'phone', 'college','roll_no', 'college_id_card']
 
 class IdUploadForm(forms.Form):
     image = forms.ImageField()

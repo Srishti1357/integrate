@@ -26,9 +26,9 @@ urlpatterns = [
     # Student URLs
     path('students/', student_list, name='student_list'),
     path('students/create/', student_create, name='student_create'),
-    path('students/delete/<int:student_id>/', student_delete, name='student_delete'),
+    path('students/delete/<uuid:student_id>/', student_delete, name='student_delete'),
     path('students/print/', print_students, name='print_students'),
-    path('students/update/<int:student_id>/', student_update, name='student_update'),
+    path('students/update/<uuid:student_id>/', student_update, name='student_update'),
 
     # Authentication
     path('', admin_login.as_view(), name='admin_login'),
