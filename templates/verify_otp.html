@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -47,6 +47,91 @@
     <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(12px); padding: 25px; border-radius: 12px; text-align: center; width: 350px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
         <h2 style="color: white; margin-bottom: 20px; font-size: 24px;">Verify OTP</h2>
 
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div style="background: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 8px; margin-bottom: 12px; color: {% if message.tags == 'success' %}#4CAF50{% else %}#FF5252{% endif %}; font-weight: bold;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="otp" placeholder="Enter OTP" required style="width: 100%; padding: 12px; margin: 12px 0; border: none; border-radius: 8px; outline: none; text-align: center; font-size: 16px; background: rgba(255, 255, 255, 0.2); color: white;">
+            
+            <button id="verifyBtn" type="submit" style="width: 100%; padding: 14px; background: #ff4b5c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; transition: 0.3s ease;">
+                Verify OTP
+            </button>
+        </form>
+
+
+        <form method="GET" action="{% url 'resend_otp' %}">
+            <button id="resendBtn" type="submit" style="display: none; width: 100%; padding: 14px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; transition: 0.3s ease;">
+                Resend OTP
+            </button>
+        </form>
+
+        <p id="timer" style="color: yellow; margin-top: 10px;"></p>
+    </div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <script>
+        let timer = 60;
+        let interval;
+
+        function startCountdown() {
+            let display = document.getElementById("timer");
+            let verifyBtn = document.getElementById("verifyBtn");
+            let resendBtn = document.getElementById("resendBtn");
+            let otpInput = document.getElementById("otpInput");
+
+            interval = setInterval(() => {
+                if (timer > 0) {
+                    display.textContent = OTP expires in ${timer--}s;
+                } else {
+                    clearInterval(interval);
+                    display.textContent = "OTP Expired! Request a new OTP.";
+                    verifyBtn.disabled = true;  // Disable Verify Button
+                    verifyBtn.style.opacity = "0.5";
+                    otpInput.disabled = true;   // Disable OTP Input
+                    resendBtn.style.display = "block"; // Show Resend Button
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(interval);
+            document.getElementById("timer").textContent = "OTP Expired! Request a new OTP.";
+            document.getElementById("verifyBtn").disabled = true;
+            document.getElementById("otpInput").disabled = true;
+            document.getElementById("resendBtn").style.display = "block";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            {% if otp_expired %}
+                stopTimer();
+            {% else %}
+                startCountdown();
+            {% endif %}
+        });
+    </script>
+</head>
+<body style="background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Poppins', sans-serif;">
+
+    <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(12px); padding: 25px; border-radius: 12px; text-align: center; width: 350px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+        <h2 style="color: white; margin-bottom: 20px; font-size: 24px;">Verify OTP</h2>
+
         <!-- Success & Error Messages -->
         {% if messages %}
             {% for message in messages %}
@@ -59,7 +144,8 @@
         <!-- Verify OTP Form -->
         <form method="POST">
             {% csrf_token %}
-            <input type="text" name="otp" placeholder="Enter OTP" required style="width: 100%; padding: 12px; margin: 12px 0; border: none; border-radius: 8px; outline: none; text-align: center; font-size: 16px; background: rgba(255, 255, 255, 0.2); color: white;">
+            <input id="otpInput" type="text" name="otp" placeholder="Enter OTP" required 
+                style="width: 100%; padding: 12px; margin: 12px 0; border: none; border-radius: 8px; outline: none; text-align: center; font-size: 16px; background: rgba(255, 255, 255, 0.2); color: white;">
             
             <!-- Verify Button -->
             <button id="verifyBtn" type="submit" style="width: 100%; padding: 14px; background: #ff4b5c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; transition: 0.3s ease;">

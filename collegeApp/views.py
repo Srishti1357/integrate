@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import Student,  CustomUser
 from adminApp.models import College
+from gate.models import Attendance
 
 
 def user_login(request):
@@ -33,11 +34,16 @@ def dashboard(request):
 
 @login_required
 def update_approval(request, student_id, status):
-    """Update student approval status."""
+    """Update student approval status. If approved, only then send to gatekeeper."""
     student = get_object_or_404(Student, id=student_id)
     student.approval = status
     student.save()
+
+    if status == 1:  # Only approved students are sent to the gatekeeper
+        print(f"Student {student.name} has been approved and is now visible to the gatekeeper.")
+
     return redirect("dashboard")
+
 
 def user_logout(request):
     """Log out the user."""

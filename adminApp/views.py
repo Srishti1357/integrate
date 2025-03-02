@@ -63,8 +63,9 @@ def user_create(request):
         email = request.POST['email']
         password = request.POST['password']
         college_id = request.POST['college']
+        phone = request.POST['phone']
         college = get_object_or_404(College, id=college_id)
-        CustomUser.objects.create_user(username=username, email=email, password=password, college=college)
+        CustomUser.objects.create_user(phone = phone, username=username, email=email, password=password, college=college)
         return redirect('user_list')
     colleges = College.objects.all()
     return render(request, 'admin_user_form.html', {'colleges': colleges})
@@ -106,8 +107,12 @@ def student_create(request):
         roll_no = request.POST['roll_no']
         college_id = request.POST['college']
         college = get_object_or_404(College, id=college_id)
-        Student.objects.create(name=name, roll_no=roll_no, college=college)
+        
+        # Student create ho raha hai, par Attendance abhi create nahi hoga
+        student = Student.objects.create(name=name, roll_no=roll_no, college=college, approval=2)
+
         return redirect('student_list')
+    
     colleges = College.objects.all()
     return render(request, 'admin_student_form.html', {'colleges': colleges})
 
@@ -128,6 +133,7 @@ def student_update(request, student_id):
         student.type_of_visitor = request.POST.get("type_of_visitor")
         college_id = request.POST.get("college")
         student.college = get_object_or_404(College, id=college_id)
+        
         
         # Update attendance: if a status is provided, update or create the attendance record.
         new_attendance_status = request.POST.get("attendance_status")

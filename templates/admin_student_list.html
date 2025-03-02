@@ -45,13 +45,22 @@
                     <td>{{ student.name }}</td>
                     <td>{{ student.roll_no }}</td>
                     <td>{{ student.college.college_name }}</td>
-                    <td>
+                    <!-- <td>
                         {% if student.attendence %}
-                            {{ student.attendence.status }}
+                            {{ student.attendence_id.status }}
+                        {% else %}
+                            Not Marked
+                        {% endif %}
+                    </td> -->
+
+                    <td>
+                        {% if student.attendance %}
+                            {{ student.attendance.get_status_display }}
                         {% else %}
                             Not Marked
                         {% endif %}
                     </td>
+                    
                     <td>{{ student.datetime }}</td>
                     <td>
                         <a href="{% url 'student_update' student.id %}" class="btn btn-warning btn-sm">Update</a>

@@ -105,11 +105,12 @@ class Student(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)
 
     approval_choices = [
-        (0, 'Rejected'),
-        (1, 'Accepted'),
-        (2, 'Pending'),
+    (0, 'Rejected'),
+    (1, 'Accepted'),
+    (2, 'Pending'),  # Default
     ]
-    approval = models.IntegerField(choices=approval_choices, default=2)
+    approval = models.IntegerField(choices=approval_choices, default=2)  # Ensure it defaults to Pending
+
 
     attendance = models.ForeignKey(
         'gate.Attendance', 
